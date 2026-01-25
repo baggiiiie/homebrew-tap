@@ -1,0 +1,52 @@
+name: Update Formula
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version (e.g., v0.0.2)"
+        required: true
+      formula:
+        description: "Formula name"
+        required: true
+      repo:
+        description: "Source repository (e.g., baggiiiie/configlock)"
+        required: true
+
+jobs:
+  update-formula:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update formula
+        run: |
+          VERSION="${{ github.event.inputs.version }}"
+          FORMULA="${{ github.event.inputs.formula }}"
+          REPO="${{ github.event.inputs.repo }}"
+          VERSION_NUM="${VERSION#v}"
+
+          # Calculate SHA256 for each platform/arch
+          SHA_DARWIN_ARM64=$(curl -sL "https://github.com/${REPO}/releases/download/${VERSION}/${FORMULA}-darwin-arm64" | shasum -a 256 | awk '{print $1}')
+          SHA_DARWIN_AMD64=$(curl -sL "https://github.com/${REPO}/releases/download/${VERSION}/${FORMULA}-darwin-amd64" | shasum -a 256 | awk '{print $1}')
+          SHA_LINUX_ARM64=$(curl -sL "https://github.com/${REPO}/releases/download/${VERSION}/${FORMULA}-linux-arm64" | shasum -a 256 | awk '{print $1}')
+          SHA_LINUX_AMD64=$(curl -sL "https://github.com/${REPO}/releases/download/${VERSION}/${FORMULA}-linux-amd64" | shasum -a 256 | awk '{print $1}')
+
+          # Update version
+          sed -i "s/version \".*\"/version \"${VERSION_NUM}\"/" Formula/${FORMULA}.rb
+
+          # Update SHA256 values (match by the binary name in preceding url line)
+          sed -i "/${FORMULA}-darwin-arm64/,/sha256/{s/sha256 \".*\"/sha256 \"${SHA_DARWIN_ARM64}\"/}" Formula/${FORMULA}.rb
+          sed -i "/${FORMULA}-darwin-amd64/,/sha256/{s/sha256 \".*\"/sha256 \"${SHA_DARWIN_AMD64}\"/}" Formula/${FORMULA}.rb
+          sed -i "/${FORMULA}-linux-arm64/,/sha256/{s/sha256 \".*\"/sha256 \"${SHA_LINUX_ARM64}\"/}" Formula/${FORMULA}.rb
+          sed -i "/${FORMULA}-linux-amd64/,/sha256/{s/sha256 \".*\"/sha256 \"${SHA_LINUX_AMD64}\"/}" Formula/${FORMULA}.rb
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Formula/${{ github.event.inputs.formula }}.rb
+          git commit -m "Update ${{ github.event.inputs.formula }} to ${{ github.event.inputs.version }}"
+          git push
