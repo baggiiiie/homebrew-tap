@@ -28,20 +28,13 @@ jobs:
           REPO="${{ github.event.inputs.repo }}"
           VERSION_NUM="${VERSION#v}"
 
-          # Calculate SHA256 for each platform/arch
-          SHA_DARWIN_ARM64=$(curl -sL "https://github.com/${REPO}/releases/download/${VERSION}/${FORMULA}-darwin-arm64" | shasum -a 256 | awk '{print $1}')
-          SHA_DARWIN_AMD64=$(curl -sL "https://github.com/${REPO}/releases/download/${VERSION}/${FORMULA}-darwin-amd64" | shasum -a 256 | awk '{print $1}')
-          SHA_LINUX_ARM64=$(curl -sL "https://github.com/${REPO}/releases/download/${VERSION}/${FORMULA}-linux-arm64" | shasum -a 256 | awk '{print $1}')
-          SHA_LINUX_AMD64=$(curl -sL "https://github.com/${REPO}/releases/download/${VERSION}/${FORMULA}-linux-amd64" | shasum -a 256 | awk '{print $1}')
+          # Make script executable
+          chmod +x scripts/update-formula.rb
 
-          # Update version
-          sed -i "s/version \".*\"/version \"${VERSION_NUM}\"/" Formula/${FORMULA}.rb
-
-          # Update SHA256 values (match by the binary name in preceding url line)
-          sed -i "/${FORMULA}-darwin-arm64/,/sha256/{s/sha256 \".*\"/sha256 \"${SHA_DARWIN_ARM64}\"/}" Formula/${FORMULA}.rb
-          sed -i "/${FORMULA}-darwin-amd64/,/sha256/{s/sha256 \".*\"/sha256 \"${SHA_DARWIN_AMD64}\"/}" Formula/${FORMULA}.rb
-          sed -i "/${FORMULA}-linux-arm64/,/sha256/{s/sha256 \".*\"/sha256 \"${SHA_LINUX_ARM64}\"/}" Formula/${FORMULA}.rb
-          sed -i "/${FORMULA}-linux-amd64/,/sha256/{s/sha256 \".*\"/sha256 \"${SHA_LINUX_AMD64}\"/}" Formula/${FORMULA}.rb
+          # Run the formula generator
+          ruby scripts/update-formula.rb "${FORMULA}" "${VERSION_NUM}" "${REPO}"
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
 
       - name: Commit changes
         run: |
