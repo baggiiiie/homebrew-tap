@@ -79,6 +79,7 @@ def read_formula_metadata(formula_path)
   metadata[:desc] = content[/desc\s+"([^"]+)"/, 1]
   metadata[:homepage] = content[/homepage\s+"([^"]+)"/, 1]
   metadata[:license] = content[/license\s+"([^"]+)"/, 1]
+  metadata[:dependencies] = content.scan(/depends_on\s+"([^"]+)"/).flatten
 
   metadata
 end
@@ -93,6 +94,14 @@ def generate_formula(formula_name, version, repo, binaries, metadata)
       version "#{version}"
       license "#{metadata[:license] || "MIT"}"
   RUBY
+
+  # Add dependencies if any exist
+  if metadata[:dependencies] && !metadata[:dependencies].empty?
+    formula << "\n"
+    metadata[:dependencies].each do |dep|
+      formula << "  depends_on \"#{dep}\"\n"
+    end
+  end
 
   # Group binaries by OS
   os_groups = binaries.group_by { |b| PLATFORM_MAP[b[:platform]][:os] }
