@@ -4,6 +4,8 @@ class Jw < Formula
   version "0.0.1"
   license "MIT"
 
+  depends_on "terminal-notifier"
+
   on_macos do
     on_intel do
       url "https://github.com/baggiiiie/jw/releases/download/v0.0.1/jw-darwin-amd64"
