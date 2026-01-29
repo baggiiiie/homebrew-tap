@@ -47,7 +47,9 @@ def fetch_release_assets(repo, version)
   JSON.parse(response.body)['assets']
 end
 
-def calculate_sha256(url)
+def calculate_sha256(url, redirect_limit = 10)
+  raise "Too many redirects" if redirect_limit == 0
+
   uri = URI(url)
   http = Net::HTTP.new(uri.host, uri.port)
   http.use_ssl = true
@@ -57,12 +59,15 @@ def calculate_sha256(url)
 
   response = http.request(request)
 
-  unless response.is_a?(Net::HTTPSuccess)
+  case response
+  when Net::HTTPSuccess
+    Digest::SHA256.hexdigest(response.body)
+  when Net::HTTPRedirection
+    calculate_sha256(response['location'], redirect_limit - 1)
+  else
     puts "Error downloading #{url}: #{response.code}"
-    return nil
+    nil
   end
-
-  Digest::SHA256.hexdigest(response.body)
 end
 
 def read_formula_metadata(formula_path)
