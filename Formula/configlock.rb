@@ -1,28 +1,28 @@
 class Configlock < Formula
   desc "Lock config files during work hours using system-level immutable flags"
   homepage "https://github.com/baggiiiie/configlock"
-  version "0.0.2"
+  version "0.0.3"
   license "MIT"
 
   on_macos do
-    on_arm do
-      url "https://github.com/baggiiiie/configlock/releases/download/v#{version}/configlock-darwin-arm64"
-      sha256 "2b8506ba3898b86f63736ad40e92df45f8eca24e9b47218edd395ed21266e8d6"
-    end
     on_intel do
-      url "https://github.com/baggiiiie/configlock/releases/download/v#{version}/configlock-darwin-amd64"
-      sha256 "2e53858ce582d0552714cfc9712316bce8b07d646a744557f83ffd57066b54f9"
+      url "https://github.com/baggiiiie/configlock/releases/download/v0.0.3/configlock-darwin-amd64"
+      sha256 "fb0ac2e1553f9ae5e3ced705504787f4f54dfe74bfc461ba426500a51263012a"
+    end
+    on_arm do
+      url "https://github.com/baggiiiie/configlock/releases/download/v0.0.3/configlock-darwin-arm64"
+      sha256 "0eafc42f66434801212f283b11df141a79e7f3360fb368ad2b9426528d1af770"
     end
   end
 
   on_linux do
-    on_arm do
-      url "https://github.com/baggiiiie/configlock/releases/download/v#{version}/configlock-linux-arm64"
-      sha256 "775f9b7c02694cb62d8c937c6c434afd2b87f96fc0832188a6d914781f28dbd9"
-    end
     on_intel do
-      url "https://github.com/baggiiiie/configlock/releases/download/v#{version}/configlock-linux-amd64"
-      sha256 "392df8f982cda4c5020379d172fa10c4c86bf2d486f541256f1e6af3e2c0d184"
+      url "https://github.com/baggiiiie/configlock/releases/download/v0.0.3/configlock-linux-amd64"
+      sha256 "8e0a1ab2e1deab409cf0fb1ea9fc5a11dffff26c83560632a646e92b24837f56"
+    end
+    on_arm do
+      url "https://github.com/baggiiiie/configlock/releases/download/v0.0.3/configlock-linux-arm64"
+      sha256 "15c70322b795de9b35a2bafd2b6d98532961cba3325bc7fc7dc012c83ddd642a"
     end
   end
 
