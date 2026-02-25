@@ -10,7 +10,7 @@ class Jw < Formula
 
   if Hardware::CPU.intel?
     url "https://github.com/baggiiiie/jw/releases/download/v0.0.5/jw_Darwin_x86_64.tar.gz"
-    sha256 "1724ad37d6098199978188154b7e03261951b5d476b30ed65717e17c646134c5"
+    sha256 "0cc4b6b5fd4caee72f2eb65ffd3abe5863795f61a5f0f14161014e9dc58d813d"
 
     define_method(:install) do
       bin.install "jw"
@@ -19,7 +19,7 @@ class Jw < Formula
   end
   if Hardware::CPU.arm?
     url "https://github.com/baggiiiie/jw/releases/download/v0.0.5/jw_Darwin_arm64.tar.gz"
-    sha256 "52a4148f4eaae6d18b7acd1375cc323a646327ca45309dd111c07fc94b7e9859"
+    sha256 "754ca518744f13bd2bcfb0af5f91296df2ece4e9280b43cb21253c85b4d5049d"
 
     define_method(:install) do
       bin.install "jw"
