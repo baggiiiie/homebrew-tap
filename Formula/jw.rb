@@ -5,23 +5,35 @@
 class Jw < Formula
   desc "A CLI tool to monitor Jenkins jobs"
   homepage "https://github.com/baggiiiie/jw"
-  version "0.0.4"
+  version "0.0.5"
   depends_on :macos
 
   if Hardware::CPU.intel?
-    url "https://github.com/baggiiiie/jw/releases/download/v0.0.4/jw_Darwin_x86_64.tar.gz"
-    sha256 "ca39e8c981730951f9164d130aa19b568307894c36587ff25d1959dad1adfdd7"
+    url "https://github.com/baggiiiie/jw/releases/download/v0.0.5/jw_Darwin_x86_64.tar.gz"
+    sha256 "1724ad37d6098199978188154b7e03261951b5d476b30ed65717e17c646134c5"
 
-    def install
+    define_method(:install) do
       bin.install "jw"
+      (share/"jw"/"extension").install Dir["extension/*"]
     end
   end
   if Hardware::CPU.arm?
-    url "https://github.com/baggiiiie/jw/releases/download/v0.0.4/jw_Darwin_arm64.tar.gz"
-    sha256 "dcaa5610f438337358a7325cf0e0e0bc03003d06341aed6fd2ef94773f5ff484"
+    url "https://github.com/baggiiiie/jw/releases/download/v0.0.5/jw_Darwin_arm64.tar.gz"
+    sha256 "52a4148f4eaae6d18b7acd1375cc323a646327ca45309dd111c07fc94b7e9859"
 
-    def install
+    define_method(:install) do
       bin.install "jw"
+      (share/"jw"/"extension").install Dir["extension/*"]
     end
+  end
+
+  def caveats
+    <<~EOS
+      To install the Chrome extension:
+        1. Open chrome://extensions
+        2. Enable "Developer mode"
+        3. Click "Load unpacked" and select:
+           #{share}/jw/extension
+    EOS
   end
 end
